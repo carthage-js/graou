@@ -1,0 +1,23 @@
+{
+  "name": "exemples",
+  "version": "1.0.0",
+  "description": "A bunch of demo using the graou lib",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "run-ex": "node -r ts-node/register $DEMO_FILE",
+    "basic-js": "node ./src/basic.js",
+    "basic": "DEMO_FILE=./src/basic.ts npm run run-ex",
+    "loader": "DEMO_FILE=./src/loader.ts npm run run-ex",
+    "subcodes": "DEMO_FILE=./src/subcodes.ts npm run run-ex"
+  },
+  "dependencies": {
+    "@carthage-js/graou": "file://.."
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

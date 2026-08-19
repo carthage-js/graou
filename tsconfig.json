@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "module": "commonjs",
+        "strict": true,
+        "noImplicitAny": true,
+        "declaration": true,
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "paths": {
+            "$project/*": [
+                "./src/*"
+            ]
+        },
+        "types": [
+            "@types/jest"
+        ]
+    },
+    "exclude": [
+        "oxlint.config.ts",
+        "jest.config.ts",
+        "dist",
+        "examples"
+    ]
+}

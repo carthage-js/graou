@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run TU on scripts",
+            "type": "node",
+            "request": "launch",
+            "args": [
+                "node_modules/.bin/jest"
+            ],
+            "console": "internalConsole",
+            "outputCapture": "std",
+        },
+    ]
+}
