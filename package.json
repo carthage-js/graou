@@ -26,6 +26,7 @@
     "prepack": "npm run build",
     "build": "rm -rf ./dist/ && tsc && tsc-alias",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
