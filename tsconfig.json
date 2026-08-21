@@ -20,6 +20,7 @@
         "oxlint.config.ts",
         "jest.config.ts",
         "dist",
-        "examples"
+        "examples",
+        "**/*.test.*"
     ]
 }
