@@ -22,22 +22,22 @@ to creating and managing application errors instead of handling exceptions in an
 > Check our examples to see our way to use it 😀
 > [examples](https://github.com/carthage-js/graou/tree/main/examples)
 
-## How to use ? (Quickstart)
+## How to contributes
 
-> [!NOTE]
-> We got a [⭐ wiki ⭐](https://carthage-js.github.io/graou/) that go deeper in the explaination.
+### About the wiki
 
-```javascript
-const graou = require("@carthage-js/graou");
-
-const errorsFactory = graou.makeModuleErrorsFactory({
-  moduleName: "<SHOULD REFERE TO YOUR name FIELD OF package.json>",
-});
-
-
-const errors = errorsFactory("<SCOPE NAME>", ["<CODE NAME>", "<OTHER CODE NAME>"]);
-
-// Use errors like that:
-throw errors.codes.<CODE NAME>.factory("<YOUR REASON>");
-throw errors.codes.<CODE NAME>.factory("<YOUR REASON>", { cause: "<PASS THE PARENT EXCEPTION HERE>" })
-```
+1. **File naming:**
+   The files must be prefix by a two digits number
+   then the page title with a `snake_case` format.
+2. **Create pages:**
+   Create a file matching first rule and add it to the `SUMMARY.md`.
+   The file is ignored if not linked in the summary.
+3. **Create a section:**
+   Create a directory matching first rule.
+   Create a `00_readme.md` or `00_intro.md` and add it to the summary.
+   Reason: The summary wont allow non link entry.
+4. **Media:**
+   If your page contains pictures you must put it inside a folder
+   with the same filename than the markdown file.
+   The folder name didn't contains the `.md` extension.
+   Example: `src/01_chapter/01_page.md` has a media inside `src/01_chapter/01_page/my_media.png`. The markdown refer it with `![My Media](./01_page/my_media.png)`.
