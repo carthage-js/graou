@@ -1,8 +1,11 @@
+import { describe, test, expect, jest } from "@jest/globals";
+
 import { makeErrors } from "./errors.factory";
+import { MessageFactory } from "../types";
 
 describe("makeErrors", () => {
   test("Check if the properties match the final object", () => {
-    const messageFactory = jest.fn();
+    const messageFactory: jest.Mock<MessageFactory> = jest.fn();
     const errors = makeErrors(
       {
         moduleName: "jest",

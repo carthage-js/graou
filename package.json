@@ -33,7 +33,6 @@
     "fmt:check": "oxfmt --check"
   },
   "devDependencies": {
-    "@types/jest": "^30.0.0",
     "jest": "^30.4.2",
     "oxfmt": "^0.64.0",
     "oxlint": "^1.79.0",

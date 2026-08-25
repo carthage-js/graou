@@ -11,10 +11,7 @@
             "$project/*": [
                 "./src/*"
             ]
-        },
-        "types": [
-            "@types/jest"
-        ]
+        }
     },
     "exclude": [
         "oxlint.config.ts",

@@ -1,3 +1,4 @@
+import { describe, test, expect } from "@jest/globals";
 import { GraouError } from "./graou-error";
 
 describe("graou-error", () => {
