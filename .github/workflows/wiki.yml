@@ -1,0 +1,44 @@
+name: Wiki
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  mdbook:
+    name: mdBook
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Install mdbook
+        run: cargo install mdbook mdbook-mermaid
+
+      - name: Install mermaid
+        run: mdbook-mermaid install ./wiki
+
+      - name: Build book
+        run: mdbook build
+        working-directory: ./wiki
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './wiki/book'
+
+  deploy:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    runs-on: ubuntu-latest
+    needs: mdbook
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
