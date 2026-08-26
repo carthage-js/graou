@@ -37,7 +37,7 @@ export class GraouError extends Error {
   }
 
   toJSON(depth?: number): any {
-    if (typeof depth !== "number" || isNaN(depth)) {
+    if (typeof depth !== "number" || Number.isNaN(depth)) {
       depth = Number.MAX_VALUE;
     }
 
@@ -45,13 +45,12 @@ export class GraouError extends Error {
       depth = 0;
     }
 
-    const visited: GraouError[] = [];
-    let current: GraouError = this;
-
     const result: any = {};
-    let target = result;
+    const visited: GraouError[] = [];
+    let stack: [GraouError, any][] = [[this, result]];
 
-    while (depth >= 0) {
+    while (depth >= 0 && stack.length > 0) {
+      const [current, target] = stack.pop()!;
       depth--;
 
       if (visited.includes(current)) {
@@ -59,7 +58,7 @@ export class GraouError extends Error {
           recursive: true,
           referTo: visited.indexOf(current),
         });
-        break;
+        continue;
       }
 
       visited.push(current);
@@ -76,15 +75,12 @@ export class GraouError extends Error {
 
       if (depth >= 0) {
         if (current.cause instanceof GraouError) {
-          target = target.cause = {};
-          current = current.cause;
-          continue;
+          target.cause = {};
+          stack.push([current.cause, target.cause]);
         } else if (current.cause instanceof Error) {
           target.cause = current.cause.message;
         }
       }
-
-      break;
     }
 
     return result;

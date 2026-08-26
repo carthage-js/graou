@@ -24,12 +24,34 @@ describe("graou-error", () => {
       });
     });
 
+    test("Don't display cause on unpredictable type", () => {
+      const e1 = new GraouError("jest", "tu", "1", null, "Err 1", "Err 1", {
+        cause: {
+          sensitiveData: "BAD BAD BAD TO LOG",
+        },
+      });
+
+      expect(e1.toJSON()).toEqual({
+        nodeModule: "jest",
+        scope: "tu",
+        code: "1",
+        reason: "Err 1",
+      });
+    });
+
     test("Return root json", () => {
       const e3 = new GraouError("jest", "tu", "3", null, "Err 3", "Err 3");
       const e2 = new GraouError("jest", "tu", "2", "SUBCODE", "Err 2", "Err 2", { cause: e3 });
       const e1 = new GraouError("jest", "tu", "1", null, "Err 1", "Err 1", { cause: e2 });
 
       expect(e1.toJSON(0)).toEqual({
+        nodeModule: "jest",
+        scope: "tu",
+        code: "1",
+        reason: "Err 1",
+      });
+
+      expect(e1.toJSON(-1)).toEqual({
         nodeModule: "jest",
         scope: "tu",
         code: "1",
