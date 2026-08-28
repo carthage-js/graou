@@ -6,5 +6,5 @@ export interface ErrorHelper {
   decorate: (cause: any) => GraouError;
   $throw: (cause: any) => void;
   trap: <ResultType>(fn: () => ResultType) => ResultType;
-  with: (reason: string) => ErrorHelper;
+  with: (options: { reason?: string; symbol?: symbol }) => ErrorHelper;
 }

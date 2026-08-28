@@ -30,12 +30,35 @@ describe("makeErrorHelper", () => {
 
   test("with", () => {
     const helper = makeErrorHelper(tuErrorFactoryMock);
-    const childHelper = helper.with("My reason");
+    const childHelper = helper.with({
+      reason: "My reason",
+    });
     const result = childHelper.decorate(new Error("TEST"));
     expect(tuErrorFactoryMock).toHaveBeenCalled();
     expect(result).toBeInstanceOf(TuError);
     expect(result.reason).toEqual("My reason");
     expect((result.cause as any).message).toEqual("TEST");
+
+    const redecoratedResult = childHelper.decorate(result);
+    expect(redecoratedResult === result).toBeFalsy();
+    expect(redecoratedResult.cause === result).toBeTruthy();
+  });
+
+  test("with (symbol)", () => {
+    const sym = Symbol();
+    const helper = makeErrorHelper(tuErrorFactoryMock);
+    const childHelper = helper.with({
+      reason: "My reason",
+      symbol: sym,
+    });
+    const result = childHelper.decorate(new Error("TEST"));
+    expect(tuErrorFactoryMock).toHaveBeenCalled();
+    expect(result).toBeInstanceOf(TuError);
+    expect(result.reason).toEqual("My reason");
+    expect((result.cause as any).message).toEqual("TEST");
+
+    const redecoratedResult = childHelper.decorate(result);
+    expect(redecoratedResult === result).toBeTruthy();
   });
 
   describe("trap", () => {
