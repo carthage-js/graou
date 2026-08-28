@@ -1,4 +1,3 @@
-import { GraouErrorFactory } from "./graou-error.factory";
 import { GraouError } from "./graou-error";
 import { ErrorHelper } from "./error-helper";
 
