@@ -10,7 +10,8 @@
     "basic-js": "node ./src/basic.js",
     "basic": "DEMO_FILE=./src/basic.ts npm run run-ex",
     "loader": "DEMO_FILE=./src/loader.ts npm run run-ex",
-    "subcodes": "DEMO_FILE=./src/subcodes.ts npm run run-ex"
+    "subcodes": "DEMO_FILE=./src/subcodes.ts npm run run-ex",
+    "decoratedClass": "DEMO_FILE=./src/decoratedClass.ts npm run run-ex"
   },
   "dependencies": {
     "@carthage-js/graou": "file://.."
