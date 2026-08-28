@@ -3,5 +3,5 @@ export type MessageFactory = (
   scope: string,
   code: string,
   subcode: string | null,
-  reason: string,
+  reason: string | null,
 ) => string;

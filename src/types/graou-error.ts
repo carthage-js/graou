@@ -4,14 +4,14 @@ export class GraouError extends Error {
   readonly scope!: string;
   readonly code!: string;
   readonly subcode!: string | null;
-  readonly reason!: string;
+  readonly reason!: string | null;
 
   constructor(
     nodeModule: string,
     scope: string,
     code: string,
     subcode: string | null,
-    reason: string,
+    reason: string | null,
     fullMessage: string,
     options?: ErrorOptions,
   ) {

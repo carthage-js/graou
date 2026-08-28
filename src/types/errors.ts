@@ -1,5 +1,6 @@
 import { GraouErrorFactory } from "./graou-error.factory";
 import { GraouError } from "./graou-error";
+import { ErrorHelper } from "./error-helper";
 
 export interface Errors<
   Code extends string,
@@ -21,13 +22,10 @@ export interface Errors<
               [subcode in Subcode]: {
                 name: string;
                 $class: typeof GraouError;
-                factory: GraouErrorFactory;
-              };
+              } & ErrorHelper;
             };
           }
-        : {
-            factory: GraouErrorFactory;
-          })
+        : ErrorHelper)
     >;
   }>;
 }

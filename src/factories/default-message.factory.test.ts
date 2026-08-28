@@ -14,4 +14,10 @@ describe("defaultMessageFactory", () => {
       defaultMessageFactory("JEST", "TU", "BASIC_USAGE", "SUBCODE", "Coverage obliged"),
     ).toEqual("[JEST:TU:BASIC_USAGE:SUBCODE]: Coverage obliged");
   });
+
+  test("Without reason", () => {
+    expect(defaultMessageFactory("JEST", "TU", "BASIC_USAGE", "SUBCODE", null)).toEqual(
+      "[JEST:TU:BASIC_USAGE:SUBCODE]",
+    );
+  });
 });
