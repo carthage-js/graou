@@ -137,6 +137,7 @@ describe("getClassErrors & isInstanceOfClassErrors", () => {
     try {
       test.a();
     } catch (err: any) {
+      expect(isInstanceOfClassErrors(class {}, err)).toBeFalsy();
       expect(isInstanceOfClassErrors(Test, err)).toBeTruthy();
     }
   });
@@ -174,6 +175,7 @@ describe("getMethodError & isInstanceOfMethodError", () => {
     try {
       test.a();
     } catch (err: any) {
+      expect(isInstanceOfMethodError(OrdinaryTest.prototype.a, err)).toBeFalsy();
       expect(isInstanceOfMethodError(Test.prototype.a, err)).toBeTruthy();
       expect(isInstanceOfMethodError(Test.prototype.b, err)).toBeFalsy();
     }
