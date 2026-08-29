@@ -5,6 +5,6 @@ export const defaultMessageFactory: MessageFactory = (
   scope: string,
   code: string,
   subcode: string | null,
-  reason: string,
+  reason: string | null,
 ) =>
-  `[${nodeModule}:${scope}:${code}${typeof subcode === "string" ? ":" + subcode : ""}]: ${reason}`;
+  `[${nodeModule}:${scope}:${code}${typeof subcode === "string" ? ":" + subcode : ""}]${typeof reason === "string" ? ": " + reason : ""}`;

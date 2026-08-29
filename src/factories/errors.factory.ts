@@ -1,6 +1,7 @@
 import { GraouError } from "$project/types";
 import { Errors } from "$project/types/errors";
 import { InternalModuleOptions } from "$project/types/internal-module-options";
+import { makeErrorHelper } from "./error-helper.factory";
 
 export function makeErrors<
   Code extends string,
@@ -13,14 +14,25 @@ export function makeErrors<
   subcodes?: SubcodeBindToCode,
 ): Errors<Code, Subcode, SubcodeBindToCode> {
   const scopeClass = class extends GraouError {
-    constructor(code: string, subcode: string | null, reason: string, options?: ErrorOptions) {
+    constructor(
+      code: string,
+      subcode: string | null,
+      reason?: string | null,
+      options?: ErrorOptions,
+    ) {
       super(
         moduleOptions.moduleName,
         scope,
         code,
         subcode,
-        reason,
-        moduleOptions.messageFactory(moduleOptions.moduleName, scope, code, subcode, reason),
+        reason ?? null,
+        moduleOptions.messageFactory(
+          moduleOptions.moduleName,
+          scope,
+          code,
+          subcode,
+          reason ?? null,
+        ),
         options,
       );
     }
@@ -29,7 +41,7 @@ export function makeErrors<
   const codesResult: any = {};
   codes.forEach((code) => {
     const codeClass = class extends scopeClass {
-      constructor(subcode: string | null, reason: string, options?: ErrorOptions) {
+      constructor(subcode: string | null, reason?: string | null, options?: ErrorOptions) {
         super(code, subcode, reason, options);
       }
     };
@@ -38,7 +50,7 @@ export function makeErrors<
     if (subcodesResult) {
       subcodes![code]!.forEach((subcode) => {
         const subcodeClass = class extends codeClass {
-          constructor(reason: string, options?: ErrorOptions) {
+          constructor(reason?: string | null, options?: ErrorOptions) {
             super(subcode, reason, options);
           }
         };
@@ -46,7 +58,9 @@ export function makeErrors<
         subcodesResult[subcode] = {
           name: subcode,
           $class: subcodeClass,
-          factory: (reason: string, options?: ErrorOptions) => new subcodeClass(reason, options),
+          ...makeErrorHelper(
+            (reason?: string | null, options?: ErrorOptions) => new subcodeClass(reason, options),
+          ),
         };
       });
     }
@@ -58,10 +72,10 @@ export function makeErrors<
         ? {
             subcodes: subcodesResult,
           }
-        : {
-            factory: (reason: string, options?: ErrorOptions) =>
+        : makeErrorHelper(
+            (reason?: string | null, options?: ErrorOptions) =>
               new codeClass(null, reason, options),
-          }),
+          )),
     };
   });
 

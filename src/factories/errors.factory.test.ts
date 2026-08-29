@@ -33,6 +33,7 @@ describe("makeErrors", () => {
     expect(errorsAsAny.codes.CODE_C.factory).toBeDefined();
     expect(errorsAsAny.codes.CODE_C.subcodes).not.toBeDefined();
 
+    expect(errors.codes.CODE_A.factory()).toBeInstanceOf(errors.scope.$class);
     expect(errors.codes.CODE_A.factory("test")).toBeInstanceOf(errors.scope.$class);
     expect(errors.codes.CODE_A.factory("test")).toBeInstanceOf(errors.codes.CODE_A.$class);
     expect(errors.codes.CODE_A.factory("test")).not.toBeInstanceOf(errors.codes.CODE_B.$class);
