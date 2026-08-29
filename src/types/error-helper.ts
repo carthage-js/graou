@@ -4,7 +4,7 @@ import { GraouErrorFactory } from "./graou-error.factory";
 export interface ErrorHelper {
   factory: GraouErrorFactory;
   decorate: (cause: any) => GraouError;
-  $throw: (cause: any) => void;
+  $throw: <ResultType = void>(cause: any) => ResultType;
   trap: <ResultType>(fn: () => ResultType) => ResultType;
   with: (options: { reason?: string; symbol?: symbol }) => ErrorHelper;
 }
