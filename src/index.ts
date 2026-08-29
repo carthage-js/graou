@@ -1,5 +1,5 @@
 export { makeModuleErrorsFactory } from "$project/factories";
-export { GraouErrorFactory, GraouError } from "$project/types";
+export { GraouErrorFactory, GraouError, ErrorHelper } from "$project/types";
 export * as utils from "$project/utils";
 export * as decorators from "$project/decorators";
 

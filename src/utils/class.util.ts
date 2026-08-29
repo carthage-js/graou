@@ -32,7 +32,9 @@ export function decorateClassWithErrors<Type extends Function & (new (...args: a
 
     const errorHelper = errors.codes[key];
     const newFn = function (...args: any[]) {
-      return errorHelper.trap($class.prototype[key].bind(this, ...args));
+      return errorHelper
+        .with({ symbol: Symbol.for(`${errors.scope.name}:${errorHelper.name}`) })
+        .trap($class.prototype[key].bind(this, ...args));
     };
 
     newFn[graouClassSymbol] = errorHelper;

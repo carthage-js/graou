@@ -9,21 +9,39 @@ export function makeErrorHelper(
     symbol?: symbol;
   },
 ): ErrorHelper {
-  const sym = options?.symbol;
+  let customizedFactory = factory;
+  if (options?.reason) {
+    customizedFactory = function (
+      factory: GraouErrorFactory,
+      defaultReason: string,
+      reason?: string | null,
+      options?: ErrorOptions,
+    ) {
+      return factory(reason ?? defaultReason, options);
+    }.bind(null, customizedFactory, options.reason);
+  }
+
+  if (options?.symbol) {
+    customizedFactory = function (
+      factory: GraouErrorFactory,
+      sym: symbol,
+      reason?: string | null,
+      options?: ErrorOptions,
+    ) {
+      if (options?.cause instanceof GraouError && Boolean((options.cause as any)[sym])) {
+        return options.cause;
+      } else {
+        const err = factory(reason, options);
+        Object.defineProperty(err, sym, { get: () => true });
+        return err;
+      }
+    }.bind(null, customizedFactory, options.symbol);
+  }
+
   const helper: ErrorHelper = {
-    factory: !sym
-      ? factory
-      : (reason, options) => {
-          if (options?.cause instanceof GraouError && Boolean((options.cause as any)[sym])) {
-            return options.cause;
-          } else {
-            const err = factory(reason, options);
-            Object.defineProperty(err, sym, { get: () => true });
-            return err;
-          }
-        },
+    factory: customizedFactory,
     decorate(cause: any) {
-      return helper.factory(options?.reason, {
+      return helper.factory(null, {
         cause,
       });
     },

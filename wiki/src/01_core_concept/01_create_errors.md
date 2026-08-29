@@ -175,6 +175,10 @@ try {
 }
 ```
 
+> [!NOTE]
+> ![changed 1.1.0](https://img.shields.io/badge/changed->=%201.1.0-green?logo=git&style=for-the-badge)  
+> The reason parameter of the error factory become optional.
+
 ## Logging
 
 Another good thing that comes with Graou errors.
@@ -210,6 +214,18 @@ The `cause` attribute is either the same structured JSON if it's a `GraouError`,
 The `cause` is not disclosed if it's something else, to avoid printing sensitive data.
 You can also control how deep you want to stringify this error with the depth parameter of the method.
 This way, it won't show the cause because it can't go any deeper.
+
+## Subcodes
+
+In some cases, you need to provide more details about a method because a single error may not be sufficient.
+You can create subcodes for a code. In this case, the code becomes abstract, and the factory is no longer available for that code.
+A subcode works like a regular code, but it directly inherits from the code class rather than from the scope class.
+
+```typescript
+const errors = errorsFactory("MyScope", ["SimpleCode", "CodeWithSubcode"], {
+  CodeWithSubcode: ["CodeA", "CodeB"],
+});
+```
 
 ## Class relationship diagram
 
