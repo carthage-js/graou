@@ -1,8 +1,12 @@
-import { ClassErrorsFactory } from "./types";
-import { decorateClassWithErrors } from "./utils";
+import { ClassErrors, ClassErrorsFactory } from "./types";
+import { decorateClassWithErrors, bindClassWithErrors } from "./utils";
 
-export function AutoErrors(errorsFactory: ClassErrorsFactory) {
+export function AutoErrors(errorsOrErrorsFactory: ClassErrorsFactory | ClassErrors) {
   return function <Type extends Function & (new (...args: any) => any)>($class: Type) {
-    return decorateClassWithErrors(errorsFactory, $class);
+    if (typeof errorsOrErrorsFactory === "function") {
+      return decorateClassWithErrors(errorsOrErrorsFactory, $class);
+    } else {
+      return bindClassWithErrors(errorsOrErrorsFactory, $class);
+    }
   };
 }

@@ -2,13 +2,116 @@ import { describe, test, expect } from "@jest/globals";
 
 import { makeModuleErrorsFactory } from "../factories";
 import {
+  guardClassErrorsMismatch,
+  bindClassWithErrors,
   decorateClassWithErrors,
   getClassErrors,
   getMethodError,
   isInstanceOfClassErrors,
   isInstanceOfMethodError,
 } from "./class.util";
+import { utilsErrors } from "../errors";
 import { GraouError } from "../types";
+
+describe("guardClassErrorsMismatch", () => {
+  const errorsFactory = makeModuleErrorsFactory({
+    moduleName: "jest",
+  });
+
+  test("Must not throw when errors are matching class methods and constructor", () => {
+    expect(() =>
+      guardClassErrorsMismatch(errorsFactory("SUCCESS", ["constructor"]), class SUCCESS {}),
+    ).not.toThrow();
+
+    class Parent {
+      d() {}
+    }
+
+    expect(() =>
+      guardClassErrorsMismatch(
+        errorsFactory("SUCCESS", ["constructor", "a", "b", "c"]),
+        class SUCCESS extends Parent {
+          private _attr = false;
+
+          private a() {}
+
+          b() {}
+
+          c() {}
+        },
+      ),
+    ).not.toThrow();
+  });
+
+  test("Must throw when errors are not matching class methods and constructor", () => {
+    expect(() => guardClassErrorsMismatch(errorsFactory("FAILURE", []), class FAILURE {})).toThrow(
+      utilsErrors.codes.guardBindClassErrors.$class,
+    );
+
+    expect(() =>
+      guardClassErrorsMismatch(errorsFactory("FAILURE", ["constructor"]), class {}),
+    ).toThrow(utilsErrors.codes.guardBindClassErrors.$class);
+
+    class Parent {
+      d() {}
+    }
+
+    expect(() =>
+      guardClassErrorsMismatch(
+        errorsFactory("FAILURE", ["constructor", "a", "c", "d"]),
+        class FAILURE extends Parent {
+          private _attr = false;
+
+          private a() {}
+
+          b() {}
+
+          c() {}
+        },
+      ),
+    ).toThrow(utilsErrors.codes.guardBindClassErrors.$class);
+  });
+});
+
+describe("bindClassWithErrors", () => {
+  const errorsFactory = makeModuleErrorsFactory({
+    moduleName: "jest",
+  });
+
+  class Parent {
+    my_parent_class() {
+      throw new Error("Not decorated");
+    }
+  }
+
+  class Demo extends Parent {
+    constructor($throw: boolean) {
+      super();
+      if ($throw) {
+        throw new Error("contructor");
+      }
+    }
+
+    my_child_class() {
+      throw new Error("Decorated");
+    }
+  }
+
+  const errors = errorsFactory("Demo", ["constructor", "my_child_class"]);
+  const DemoDecorated = bindClassWithErrors(errors, Demo);
+
+  test("Must throw the raw error of a parent class", () => {
+    expect(() => new DemoDecorated(false).my_parent_class()).toThrow();
+    expect(() => new DemoDecorated(false).my_parent_class()).not.toThrow(errors.scope.$class);
+  });
+
+  test("Must throw the right code upon the right function", () => {
+    expect(() => new DemoDecorated(true)).toThrow(errors.codes.constructor.$class);
+    expect(() => new DemoDecorated(false).my_child_class()).toThrow(
+      errors.codes.my_child_class.$class,
+    );
+  });
+});
 
 describe("decorateClassWithErrors", () => {
   const errorsFactory = makeModuleErrorsFactory({
