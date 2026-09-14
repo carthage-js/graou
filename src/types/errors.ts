@@ -15,16 +15,17 @@ export interface Errors<
       {
         name: string;
         $class: typeof GraouError;
-      } & (SubcodeBindToCode[code] extends (infer Subcode extends string)[]
-        ? {
-            subcodes: {
-              [subcode in Subcode]: {
-                name: string;
-                $class: typeof GraouError;
-              } & ErrorHelper;
-            };
-          }
-        : ErrorHelper)
+      } & ErrorHelper &
+        (SubcodeBindToCode[code] extends (infer Subcode extends string)[]
+          ? {
+              subcodes: {
+                [subcode in Subcode]: {
+                  name: string;
+                  $class: typeof GraouError;
+                } & ErrorHelper;
+              };
+            }
+          : {})
     >;
   }>;
 }

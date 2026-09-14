@@ -68,14 +68,14 @@ export function makeErrors<
     codesResult[code] = {
       name: code,
       $class: codeClass,
+      ...makeErrorHelper(
+        (reason?: string | null, options?: ErrorOptions) => new codeClass(null, reason, options),
+      ),
       ...(subcodesResult
         ? {
             subcodes: subcodesResult,
           }
-        : makeErrorHelper(
-            (reason?: string | null, options?: ErrorOptions) =>
-              new codeClass(null, reason, options),
-          )),
+        : {}),
     };
   });
 

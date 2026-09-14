@@ -27,7 +27,7 @@ describe("makeErrors", () => {
 
     expect(errors.codes.CODE_B.name).toEqual("CODE_B");
     expect(errors.codes.CODE_B.subcodes.SUBCODE_A.name).toEqual("SUBCODE_A");
-    expect(errorsAsAny.codes.CODE_B.factory).not.toBeDefined();
+    expect(errorsAsAny.codes.CODE_B.factory).toBeDefined();
 
     expect(errors.codes.CODE_C.name).toEqual("CODE_C");
     expect(errorsAsAny.codes.CODE_C.factory).toBeDefined();
@@ -41,6 +41,13 @@ describe("makeErrors", () => {
       errors.codes.CODE_B.subcodes.SUBCODE_A.$class,
     );
     expect(errors.codes.CODE_A.factory("test")).not.toBeInstanceOf(errors.codes.CODE_C.$class);
+
+    expect(errors.codes.CODE_B.factory("test")).toBeInstanceOf(errors.scope.$class);
+    expect(errors.codes.CODE_B.factory("test")).not.toBeInstanceOf(errors.codes.CODE_A.$class);
+    expect(errors.codes.CODE_B.factory("test")).not.toBeInstanceOf(
+      errors.codes.CODE_B.subcodes.SUBCODE_A.$class,
+    );
+    expect(errors.codes.CODE_B.factory("test")).not.toBeInstanceOf(errors.codes.CODE_C.$class);
 
     expect(errors.codes.CODE_B.subcodes.SUBCODE_A.factory("test")).toBeInstanceOf(
       errors.scope.$class,
