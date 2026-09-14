@@ -75,3 +75,47 @@ class MyClass {
 const instance = new MyClass();
 instance.myMethod();
 ```
+
+> [!NOTE]
+> ![changed 1.2.0](https://img.shields.io/badge/changed->=%201.2.0-green?logo=git&style=for-the-badge)  
+> You can pass directly an errors that match your class because it can be much easier for the typing over the usage.
+> You must aware that errors object must match your class declaration. Otherwise, Graou throw an error due to the mismatch between the two objects.
+
+## Bind class errors
+
+![added 1.2.0](https://img.shields.io/badge/added->=%201.2.0-green?logo=git&style=for-the-badge)
+
+Graou offer also an alternate way to alterate your class.
+The whole reason is due to typing.
+Make the errors fully generated mean that you must rely upon `getClassErrors` and `getMethodError` function to access the basic concepts of Graou for those class.
+There are not bad but they can create some dumb error because the things are solved during runtime.
+To avoid that, you can define separetly the class and errors.
+This way typescript will be able to ensure the typing.
+Other tools will also be able to issue early error if something is undefined (like webpack).
+Graou is gonna check the class and errors are matching when he decorate the class with them to avoid issues.
+
+```typescript
+import graou from "@carthage-js/graou";
+
+const errorsFactory = graou.makeModuleErrorsFactory({
+  moduleName: "<YOUR PROJECT NAME>",
+});
+
+const errors = errorsFactory("MyClass", ["myMethod", "myAsyncMethod"]);
+
+class MyClass {
+  myMethod() {
+    // ... my code
+  }
+
+  async myAsyncMethod() {
+    // ... my code
+  }
+}
+
+const MyClassDecorated = graou.utils.bindClassWithErrors(errors, MyClass);
+
+// Usage
+const instance = new MyClassDecorated();
+instance.myMethod();
+```
