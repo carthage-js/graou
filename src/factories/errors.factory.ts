@@ -13,6 +13,30 @@ export function makeErrors<
   codes: Code[],
   subcodes?: SubcodeBindToCode,
 ): Errors<Code, Subcode, SubcodeBindToCode> {
+  const makeLookup = (search?: { code?: string; subcode?: string }) => {
+    return (errOrLambda: any, uid?: string): GraouError | undefined => {
+      if (typeof errOrLambda === "function") {
+        try {
+          errOrLambda();
+          return undefined;
+        } catch (err: any) {
+          errOrLambda = err;
+        }
+      }
+
+      if (errOrLambda instanceof GraouError) {
+        return errOrLambda.lookup({
+          ...search,
+          nodeModule: moduleOptions.moduleName,
+          scope,
+          uid,
+        });
+      } else {
+        return undefined;
+      }
+    };
+  };
+
   const scopeClass = class extends GraouError {
     constructor(
       code: string,
@@ -61,6 +85,7 @@ export function makeErrors<
           ...makeErrorHelper(
             subcodeClass,
             (reason?: string | null, options?: ErrorOptions) => new subcodeClass(reason, options),
+            makeLookup({ code, subcode }),
           ),
         };
       });
@@ -72,6 +97,7 @@ export function makeErrors<
       ...makeErrorHelper(
         codeClass,
         (reason?: string | null, options?: ErrorOptions) => new codeClass(null, reason, options),
+        makeLookup({ code }),
       ),
       ...(subcodesResult
         ? {
@@ -85,6 +111,7 @@ export function makeErrors<
     scope: {
       name: scope,
       $class: scopeClass as typeof GraouError,
+      lookup: makeLookup(),
     },
     codes: codesResult,
   };

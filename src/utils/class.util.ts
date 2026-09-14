@@ -54,7 +54,7 @@ export function bindClassWithErrors<Type extends Function & (new (...args: any) 
     const errorHelper = errors.codes[key];
     const newFn = function (...args: any[]) {
       return errorHelper
-        .with({ symbol: Symbol.for(`${errors.scope.name}:${errorHelper.name}`) })
+        .with({ uid: `${errors.scope.name}:${errorHelper.name}` })
         .trap($class.prototype[key].bind(this, ...args));
     };
 
