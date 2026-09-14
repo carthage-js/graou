@@ -85,6 +85,15 @@ function recurse(steps: number) {
 // Throwing will result into a single Code error rather than a Code with [steps - 1] Code cause.
 ```
 
+### Special case with subcodes
+
+![added 1.2.0](https://img.shields.io/badge/added->=%201.2.0-green?logo=git&style=for-the-badge)
+
+The whole design about using subcode is about to make thing clear about a peculiar case.
+This way, you decorate only errors that you didn't expect or didn't want to manage their.
+This whole idea is to hydrate information on an error than remove it.
+So in this case, the subcode is not decorated with the code error.
+
 ## decorate / $throw
 
 A method that decorate an error with the code error.
