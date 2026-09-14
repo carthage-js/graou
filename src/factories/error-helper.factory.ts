@@ -2,6 +2,7 @@ import { GraouError, GraouErrorFactory } from "$project/types";
 import { ErrorHelper } from "$project/types/error-helper";
 
 export function makeErrorHelper(
+  $errorClass: Function,
   factory: GraouErrorFactory,
   options?: {
     reason?: string;
@@ -30,6 +31,15 @@ export function makeErrorHelper(
     ) {
       if (options?.cause instanceof GraouError && Boolean((options.cause as any)[sym])) {
         return options.cause;
+      } else if (
+        options?.cause instanceof $errorClass &&
+        !(options.cause as any)[sym] &&
+        Object.getPrototypeOf(options.cause) !== $errorClass
+      ) {
+        // Implies that is a subcode of this code.
+        // If he come here then we flag him the symbol before returning it.
+        Object.defineProperty(options.cause, sym, { get: () => true });
+        return options.cause as GraouError;
       } else {
         const err = factory(reason, options);
         Object.defineProperty(err, sym, { get: () => true });
@@ -61,7 +71,7 @@ export function makeErrorHelper(
       }
     },
     with(options) {
-      return makeErrorHelper(helper.factory, options);
+      return makeErrorHelper($errorClass, helper.factory, options);
     },
   };
   return helper;

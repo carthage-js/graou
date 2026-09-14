@@ -15,7 +15,7 @@ const tuErrorFactoryMock = makeErrorFactory(TuError);
 
 describe("makeErrorHelper", () => {
   test("decorate", () => {
-    const helper = makeErrorHelper(tuErrorFactoryMock);
+    const helper = makeErrorHelper(TuError, tuErrorFactoryMock);
     const result = helper.decorate(new Error("TEST"));
     expect(tuErrorFactoryMock).toHaveBeenCalled();
     expect(result).toBeInstanceOf(TuError);
@@ -24,12 +24,12 @@ describe("makeErrorHelper", () => {
   });
 
   test("$throw", () => {
-    const helper = makeErrorHelper(tuErrorFactoryMock);
+    const helper = makeErrorHelper(TuError, tuErrorFactoryMock);
     expect(() => helper.$throw(new Error("TEST"))).toThrow(TuError);
   });
 
   test("with", () => {
-    const helper = makeErrorHelper(tuErrorFactoryMock);
+    const helper = makeErrorHelper(TuError, tuErrorFactoryMock);
     const childHelper = helper.with({
       reason: "My reason",
     });
@@ -46,7 +46,7 @@ describe("makeErrorHelper", () => {
 
   test("with (symbol)", () => {
     const sym = Symbol();
-    const helper = makeErrorHelper(tuErrorFactoryMock);
+    const helper = makeErrorHelper(TuError, tuErrorFactoryMock);
     const childHelper = helper.with({
       reason: "My reason",
       symbol: sym,
@@ -61,10 +61,28 @@ describe("makeErrorHelper", () => {
     expect(redecoratedResult === result).toBeTruthy();
   });
 
+  test("with (symbol & subcode)", () => {
+    class Subcode extends TuError {}
+    const subcodeFactory = makeErrorFactory(Subcode);
+
+    const sym = Symbol();
+    const helper = makeErrorHelper(TuError, tuErrorFactoryMock);
+    const childHelper = helper.with({
+      reason: "My reason",
+      symbol: sym,
+    });
+    const result = childHelper.decorate(subcodeFactory());
+    expect(tuErrorFactoryMock).toHaveBeenCalled();
+    expect(result).toBeInstanceOf(Subcode);
+
+    const redecoratedResult = childHelper.decorate(result);
+    expect(redecoratedResult === result).toBeTruthy();
+  });
+
   describe("trap", () => {
     class TrapError extends GraouError {}
     const trapErrorFactoryMock = makeErrorFactory(TrapError);
-    const helper = makeErrorHelper(tuErrorFactoryMock);
+    const helper = makeErrorHelper(TuError, tuErrorFactoryMock);
 
     describe("sync", () => {
       test("Nothing went wrong", () => {

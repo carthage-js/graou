@@ -59,6 +59,7 @@ export function makeErrors<
           name: subcode,
           $class: subcodeClass,
           ...makeErrorHelper(
+            subcodeClass,
             (reason?: string | null, options?: ErrorOptions) => new subcodeClass(reason, options),
           ),
         };
@@ -69,6 +70,7 @@ export function makeErrors<
       name: code,
       $class: codeClass,
       ...makeErrorHelper(
+        codeClass,
         (reason?: string | null, options?: ErrorOptions) => new codeClass(null, reason, options),
       ),
       ...(subcodesResult
