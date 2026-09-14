@@ -218,14 +218,21 @@ This way, it won't show the cause because it can't go any deeper.
 ## Subcodes
 
 In some cases, you need to provide more details about a method because a single error may not be sufficient.
-You can create subcodes for a code. In this case, the code becomes abstract, and the factory is no longer available for that code.
-A subcode works like a regular code, but it directly inherits from the code class rather than from the scope class.
+You can create subcodes for a code. A subcode works like a regular code, but it directly inherits from the code class rather than from the scope class.
 
 ```typescript
 const errors = errorsFactory("MyScope", ["SimpleCode", "CodeWithSubcode"], {
   CodeWithSubcode: ["CodeA", "CodeB"],
 });
+
+// usage
+throw errors.codes.CodeWithSubcode.subcodes.CodeA.factory("Hello World !");
 ```
+
+> [!NOTE]
+> ![changed 1.2.0](https://img.shields.io/badge/changed->=%201.2.0-green?logo=git&style=for-the-badge)  
+> The code is no longer abstract when you define subcodes.
+> The whole thing has been rework to play nicely with the error handling and auto errors features.
 
 ## Class relationship diagram
 

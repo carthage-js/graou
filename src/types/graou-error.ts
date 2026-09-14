@@ -1,10 +1,19 @@
+const graouErrorQuickCauseAccessMappingSymbol: unique symbol = Symbol.for(
+  "graouErrorQuickCauseAccessMapping",
+);
+
+export const graouErrorUidSymbol: unique symbol = Symbol.for("graouUID");
+
 export class GraouError extends Error {
+  private readonly [graouErrorQuickCauseAccessMappingSymbol]?: Readonly<Record<string, GraouError>>;
+
   // Add typing because intellisense of vscode didn't detect property define with Object.defineProperties
   readonly nodeModule!: string;
   readonly scope!: string;
   readonly code!: string;
   readonly subcode!: string | null;
   readonly reason!: string | null;
+  readonly [graouErrorUidSymbol]?: string | undefined;
 
   constructor(
     nodeModule: string,
@@ -34,6 +43,70 @@ export class GraouError extends Error {
         get: () => reason,
       },
     });
+
+    if (options?.cause instanceof GraouError) {
+      const quickAccess = {
+        ...options.cause[graouErrorQuickCauseAccessMappingSymbol],
+      };
+
+      const uid = options.cause[graouErrorUidSymbol];
+      const alias: string[] = [
+        `${options.cause.scope}`,
+        `${options.cause.scope}:${options.cause.code}`,
+      ];
+
+      if (options.cause.subcode) {
+        alias.push(`${options.cause.scope}:${options.cause.code}:${options.cause.subcode}`);
+      }
+
+      for (const entry of alias) {
+        quickAccess[`${options.cause.nodeModule}:${entry}`] = options.cause;
+        quickAccess[`*:${entry}`] = options.cause;
+        if (uid) {
+          quickAccess[`${options.cause.nodeModule}:${entry}@${uid}`] = options.cause;
+          quickAccess[`*:${entry}@${uid}`] = options.cause;
+        }
+      }
+
+      const readonlyQuickAccess = Object.freeze(quickAccess);
+      Object.defineProperty(this, graouErrorQuickCauseAccessMappingSymbol, {
+        get: () => readonlyQuickAccess,
+      });
+    }
+  }
+
+  lookup(search: {
+    nodeModule?: string;
+    scope: string;
+    code?: string;
+    subcode?: string;
+    uid?: string;
+  }): GraouError | undefined {
+    if (
+      (!search.nodeModule || search.nodeModule === this.nodeModule) &&
+      search.scope === this.scope &&
+      (!search.code || search.code === this.code) &&
+      (!search.subcode || search.subcode === this.subcode) &&
+      (!search.uid || search.uid === this[graouErrorUidSymbol])
+    ) {
+      return this;
+    }
+
+    const quickAccess = this[graouErrorQuickCauseAccessMappingSymbol];
+    if (!quickAccess) {
+      return undefined;
+    }
+
+    const uidPostfix = search.uid ? `@${search.uid}` : "";
+    if (search.code && search.subcode) {
+      return quickAccess[
+        `${search.nodeModule || "*"}:${search.scope}:${search.code}:${search.subcode}${uidPostfix}`
+      ];
+    } else if (search.code) {
+      return quickAccess[`${search.nodeModule || "*"}:${search.scope}:${search.code}${uidPostfix}`];
+    } else {
+      return quickAccess[`${search.nodeModule || "*"}:${search.scope}${uidPostfix}`];
+    }
   }
 
   toJSON(depth?: number): any {

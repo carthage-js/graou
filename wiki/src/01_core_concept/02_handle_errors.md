@@ -10,6 +10,7 @@ These methods are not available on a code error when the code has subcodes. Howe
 >
 > - [async](https://github.com/carthage-js/graou/blob/devel/examples/src/async.ts)
 > - [loader](https://github.com/carthage-js/graou/blob/devel/examples/src/loader.ts)
+> - [decoratedClassAndSubcodes](https://github.com/carthage-js/graou/blob/devel/examples/src/decoratedClassAndSubcodes.ts)
 
 ## with
 
@@ -26,17 +27,21 @@ throw errors.codes.Code.with({ reason: "My reason" }).factory(); // Error will u
 throw errors.codes.Code.with({ reason: "My reason" }).factory("A reason"); // Error will use 'A reason' as error reason.
 ```
 
-### symbol
+### uid
 
-You can define a symbol to flag an error and avoid decorate something that you think the base error is suffcient.
+> [!NOTE]
+> ![changed 1.2.0](https://img.shields.io/badge/changed->=%201.2.0-green?logo=git&style=for-the-badge)  
+> Field has been rename from symbol to uid. It's also no longer a symbol to make it work with lookup feature.
+
+You can define a uid to flag an error and avoid decorate something that you think the base error is suffcient.
 
 ```typescript
 const errors = errorsFactory("MyScope", ["CodeA", "CodeB"]);
 
-const symbol = Symbol.for("my use case");
+const uid = "my use case";
 
-throw errors.codes.CodeA.with({ symbol }).factory(null, {
-  cause: errors.codes.CodeB.with({ symbol }).factory(),
+throw errors.codes.CodeA.with({ uid }).factory(null, {
+  cause: errors.codes.CodeB.with({ uid }).factory(),
 }); // Will result into only a CodeB error
 ```
 
@@ -47,22 +52,22 @@ We got two major use case that can beneficiate of this feature:
 ```typescript
 const errors = errorsFactory("MyScope", ["CodeA", "CodeB", "CodeC"]);
 
-const symbol = Symbol.for("my use case");
+const uid = "my use case";
 
 const promise = (async () => {
   // ... Critical code
 })();
 
 promise
-  .catch(errors.codes.CodeA.with({ symbol }).$throw)
+  .catch(errors.codes.CodeA.with({ uid }).$throw)
   .then(() => {
     // ... Critical code
   })
-  .catch(errors.codes.CodeB.with({ symbol }).$throw)
+  .catch(errors.codes.CodeB.with({ uid }).$throw)
   .then(() => {
     // ... Critical code
   })
-  .catch(errors.codes.CodeC.with({ symbol }).$throw);
+  .catch(errors.codes.CodeC.with({ uid }).$throw);
 // Throwing will result into either CodeA, CodeB, CodeC where cause is not a CodeA, CodeB, CodeC error
 ```
 
@@ -71,10 +76,10 @@ promise
 ```typescript
 const errors = errorsFactory("MyScope", ["Code"]);
 
-const symbol = Symbol.for("my use case");
+const uid = "my use case";
 
 function recurse(steps: number) {
-  errors.codes.Code.with({ symbol }).trap(() => {
+  errors.codes.Code.with({ uid }).trap(() => {
     if (steps >= 0) {
       recurse(steps - 1);
     } else {
@@ -84,6 +89,15 @@ function recurse(steps: number) {
 }
 // Throwing will result into a single Code error rather than a Code with [steps - 1] Code cause.
 ```
+
+### Special case with subcodes
+
+![added 1.2.0](https://img.shields.io/badge/added->=%201.2.0-green?logo=git&style=for-the-badge)
+
+The whole design about using subcode is about to make thing clear about a peculiar case.
+This way, you decorate only errors that you didn't expect or didn't want to manage their.
+This whole idea is to hydrate information on an error than remove it.
+So in this case, the subcode is not decorated with the code error.
 
 ## decorate / $throw
 
@@ -117,4 +131,39 @@ const result = errors.codes.Code.trap(() => {
   // ... Critical things
   return "my result";
 });
+```
+
+## lookup
+
+![added 1.2.0](https://img.shields.io/badge/added->=%201.2.0-green?logo=git&style=for-the-badge)
+
+This function is able to quickly query nested error no matter how big is your error.
+
+```typescript
+const errors = errorsFactory("MyScope", ["Code", "Code2"]);
+const errExample = errors.codes.Code.factory(null, {
+  cause: errors.codes.Code2.factory(),
+});
+
+// usage
+const result = errors.codes.Code2.lookup(errExample);
+const result = errors.codes.Code2.lookup(() => {
+  // Same result than before but it's pretty neat on test unit.
+  throw errExample;
+});
+```
+
+You can use the uid property to lookup a specific instance when you got twice the same error type.
+
+```typescript
+const errors = errorsFactory("MyScope", ["Code"]);
+const errExample = errors.codes.Code.with({ uid: "Code1" }).factory(null, {
+  cause: errors.codes.Code.with({ uid: "Code2" }).factory(),
+});
+
+// usage
+const result = errors.codes.Code.lookup(errExample); // root error
+const result = errors.codes.Code.lookup(errExample, "Code1"); // root error
+const result = errors.codes.Code2.lookup(errExample, "Code2"); // nested error
+const result = errors.codes.Code2.lookup(errExample, "Code3"); // undefined because no error exist with this id
 ```

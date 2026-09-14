@@ -28,18 +28,18 @@ function demo(
     inc?: number;
     cmp?: (left: number, right: number) => boolean;
   } = {},
-  symbol?: symbol,
+  uid?: string,
 ): Promise<number> {
   if (!testValues) {
     testValues = [0, 1, 2];
   }
   return Promise.resolve(options.value ?? 0)
     .then(throwOn({ ...options, value: testValues[0] }))
-    .catch(errors.codes.ERROR_A.with({ symbol }).$throw<number>)
+    .catch(errors.codes.ERROR_A.with({ uid }).$throw<number>)
     .then(throwOn({ ...options, value: testValues[1] }))
-    .catch(errors.codes.ERROR_B.with({ symbol }).$throw<number>)
+    .catch(errors.codes.ERROR_B.with({ uid }).$throw<number>)
     .then(throwOn({ ...options, value: testValues[2] }))
-    .catch(errors.codes.ERROR_C.with({ symbol }).$throw<number>);
+    .catch(errors.codes.ERROR_C.with({ uid }).$throw<number>);
 }
 
 async function main() {
@@ -53,7 +53,7 @@ async function main() {
   console.log("### Use a symbol to avoid decorate a catch ###");
   for (const i of [0, 1, 2]) {
     console.log(`=> On ${i}`);
-    await demo(null, { value: i }, Symbol.for("my demo")).catch(console.log);
+    await demo(null, { value: i }, "my demo").catch(console.log);
     console.log(`\n`);
   }
 }
