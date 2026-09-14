@@ -35,6 +35,11 @@ try {
   instance.a();
 } catch (err) {
   console.error(err);
+
+  // Use lookup if you need to check is something has been run:
+  if (TestErrors.codes.b.lookup(err)) {
+    console.log("I got a b code error inside that error.");
+  }
 }
 
 console.log("\n\n### Call method withAsync ###");

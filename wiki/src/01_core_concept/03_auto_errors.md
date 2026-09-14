@@ -85,6 +85,9 @@ instance.myMethod();
 
 ![added 1.2.0](https://img.shields.io/badge/added->=%201.2.0-green?logo=git&style=for-the-badge)
 
+> [!NOTE]
+> Check out the example: [TS](https://github.com/carthage-js/graou/blob/devel/examples/src/decoratedClassAndSubcodes.ts)
+
 Graou offer also an alternate way to alterate your class.
 The whole reason is due to typing.
 Make the errors fully generated mean that you must rely upon `getClassErrors` and `getMethodError` function to access the basic concepts of Graou for those class.
