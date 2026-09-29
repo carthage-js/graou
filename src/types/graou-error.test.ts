@@ -166,5 +166,70 @@ describe("graou-error", () => {
         },
       });
     });
+
+    test("Add annotations and labels if there are given", () => {
+      const e3 = new GraouError("jest", "tu", "3", null, "Err 3", "Err 3", {
+        labels: ["DEMO"],
+        annotations: [
+          {
+            name: "test",
+            value: "ok",
+          },
+        ],
+      });
+      const e2 = new GraouError("jest", "tu", "2", "SUBCODE", "Err 2", "Err 2", {
+        cause: e3,
+        labels: ["TEST"],
+      });
+      const e1 = new GraouError("jest", "tu", "1", null, "Err 1", "Err 1", {
+        cause: e2,
+        annotations: [
+          {
+            name: "why",
+            value: "because",
+          },
+        ],
+      });
+
+      e3.cause = e1;
+
+      expect(e1.toJSON(10)).toEqual({
+        nodeModule: "jest",
+        scope: "tu",
+        code: "1",
+        reason: "Err 1",
+        annotations: [
+          {
+            name: "why",
+            value: "because",
+          },
+        ],
+        cause: {
+          nodeModule: "jest",
+          scope: "tu",
+          code: "2",
+          reason: "Err 2",
+          subcode: "SUBCODE",
+          labels: ["TEST"],
+          cause: {
+            nodeModule: "jest",
+            scope: "tu",
+            code: "3",
+            reason: "Err 3",
+            labels: ["DEMO"],
+            annotations: [
+              {
+                name: "test",
+                value: "ok",
+              },
+            ],
+            cause: {
+              recursive: true,
+              referTo: 0,
+            },
+          },
+        },
+      });
+    });
   });
 });

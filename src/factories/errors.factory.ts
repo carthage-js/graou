@@ -1,4 +1,4 @@
-import { GraouError } from "$project/types";
+import { GraouError, GraouErrorOptions } from "$project/types";
 import { Errors } from "$project/types/errors";
 import { InternalModuleOptions } from "$project/types/internal-module-options";
 import { makeErrorHelper } from "./error-helper.factory";
@@ -42,7 +42,7 @@ export function makeErrors<
       code: string,
       subcode: string | null,
       reason?: string | null,
-      options?: ErrorOptions,
+      options?: GraouErrorOptions,
     ) {
       super(
         moduleOptions.moduleName,
@@ -65,7 +65,7 @@ export function makeErrors<
   const codesResult: any = {};
   codes.forEach((code) => {
     const codeClass = class extends scopeClass {
-      constructor(subcode: string | null, reason?: string | null, options?: ErrorOptions) {
+      constructor(subcode: string | null, reason?: string | null, options?: GraouErrorOptions) {
         super(code, subcode, reason, options);
       }
     };
@@ -74,7 +74,7 @@ export function makeErrors<
     if (subcodesResult) {
       subcodes![code]!.forEach((subcode) => {
         const subcodeClass = class extends codeClass {
-          constructor(reason?: string | null, options?: ErrorOptions) {
+          constructor(reason?: string | null, options?: GraouErrorOptions) {
             super(subcode, reason, options);
           }
         };
@@ -84,7 +84,8 @@ export function makeErrors<
           $class: subcodeClass,
           ...makeErrorHelper(
             subcodeClass,
-            (reason?: string | null, options?: ErrorOptions) => new subcodeClass(reason, options),
+            (reason?: string | null, options?: GraouErrorOptions) =>
+              new subcodeClass(reason, options),
             makeLookup({ code, subcode }),
           ),
         };
@@ -96,7 +97,8 @@ export function makeErrors<
       $class: codeClass,
       ...makeErrorHelper(
         codeClass,
-        (reason?: string | null, options?: ErrorOptions) => new codeClass(null, reason, options),
+        (reason?: string | null, options?: GraouErrorOptions) =>
+          new codeClass(null, reason, options),
         makeLookup({ code }),
       ),
       ...(subcodesResult

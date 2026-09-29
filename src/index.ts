@@ -1,16 +1,17 @@
 export { makeModuleErrorsFactory } from "$project/factories";
-export { GraouErrorFactory, GraouError, ErrorHelper } from "$project/types";
+export { GraouErrorFactory, GraouError, ErrorHelper, GraouErrorContext } from "$project/types";
 export * as utils from "$project/utils";
 export * as decorators from "$project/decorators";
 
 import { makeModuleErrorsFactory } from "$project/factories";
-import { GraouError } from "$project/types";
+import { GraouError, GraouErrorContext } from "$project/types";
 import * as utils from "$project/utils";
 import * as decorators from "$project/decorators";
 
 export default {
   makeModuleErrorsFactory,
   GraouError,
+  GraouErrorContext,
   utils,
   decorators,
 };

@@ -7,3 +7,6 @@ export * from "./class-errors";
 export * from "./class-errors-factory";
 export * from "./error-helper";
 export * from "./errors";
+export * from "./annotation";
+export * from "./graou-error-options";
+export * from "./graou-error-context";
