@@ -108,6 +108,77 @@ describe("makeErrorHelper", () => {
     expect(redecoratedResult === result).toBeTruthy();
   });
 
+  test("with (labels)", () => {
+    const helper = makeErrorHelper(TuError, tuErrorFactoryMock, tuErrorLookupMock);
+    const childHelper = helper.with({
+      labels: ["test"],
+    });
+
+    const result = childHelper.factory();
+    expect(tuErrorFactoryMock).toHaveBeenCalled();
+    expect(result.labels).toEqual(["test"]);
+
+    const childHelper2 = childHelper.with({
+      labels: ["anotherLabel"],
+    });
+
+    const result2 = childHelper2.factory(null, { labels: ["ok"] });
+    expect(result2.labels).toEqual(["test", "anotherLabel", "ok"]);
+  });
+
+  test("with (annotations)", () => {
+    const helper = makeErrorHelper(TuError, tuErrorFactoryMock, tuErrorLookupMock);
+    const childHelper = helper.with({
+      annotations: [
+        {
+          name: "fst",
+          value: 0,
+        },
+      ],
+    });
+
+    const result = childHelper.factory();
+    expect(tuErrorFactoryMock).toHaveBeenCalled();
+    expect(result.annotations).toEqual([
+      {
+        name: "fst",
+        value: 0,
+      },
+    ]);
+
+    const childHelper2 = childHelper.with({
+      annotations: [
+        {
+          name: "snd",
+          value: true,
+        },
+      ],
+    });
+
+    const result2 = childHelper2.factory(null, {
+      annotations: [
+        {
+          name: "3rd",
+          value: "nice",
+        },
+      ],
+    });
+    expect(result2.annotations).toEqual([
+      {
+        name: "fst",
+        value: 0,
+      },
+      {
+        name: "snd",
+        value: true,
+      },
+      {
+        name: "3rd",
+        value: "nice",
+      },
+    ]);
+  });
+
   describe("trap", () => {
     class TrapError extends GraouError {}
     const trapErrorFactoryMock = makeErrorFactory(TrapError);

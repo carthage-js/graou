@@ -1,4 +1,5 @@
 import {
+  Annotation,
   GraouError,
   GraouErrorFactory,
   GraouErrorLookup,
@@ -12,6 +13,8 @@ export function makeErrorHelper(
   factory: GraouErrorFactory,
   lookup: GraouErrorLookup,
   options?: {
+    annotations?: Array<Annotation>;
+    labels?: Array<string>;
     reason?: string;
     // Avoid decorate a cause when a symbol flag is defined
     uid?: string;
@@ -28,6 +31,34 @@ export function makeErrorHelper(
     ) {
       return factory(reason ?? defaultReason, options);
     }.bind(null, customizedFactory, options.reason);
+  }
+
+  if (options?.annotations?.length) {
+    customizedFactory = function (
+      factory: GraouErrorFactory,
+      defaultAnnotations: Array<Annotation>,
+      reason?: string | null,
+      options?: GraouErrorOptions,
+    ) {
+      return factory(reason, {
+        ...options,
+        annotations: [...defaultAnnotations, ...(options?.annotations || [])],
+      });
+    }.bind(null, customizedFactory, options.annotations);
+  }
+
+  if (options?.labels?.length) {
+    customizedFactory = function (
+      factory: GraouErrorFactory,
+      defaultLabels: Array<string>,
+      reason?: string | null,
+      options?: GraouErrorOptions,
+    ) {
+      return factory(reason, {
+        ...options,
+        labels: [...defaultLabels, ...(options?.labels || [])],
+      });
+    }.bind(null, customizedFactory, options.labels);
   }
 
   if (options?.uid) {

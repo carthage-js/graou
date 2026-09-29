@@ -16,6 +16,42 @@ These methods are not available on a code error when the code has subcodes. Howe
 
 This method creates a copy of the code helper with options that affect the behavior of its methods.
 
+### labels
+
+![added 1.4.0](https://img.shields.io/badge/added->=%201.4.0-green?logo=git&style=for-the-badge)
+
+You can define labels that gonna be appended to the error created.
+
+```typescript
+const errors = errorsFactory("MyScope", ["Code"]);
+
+throw errors.codes.Code.with({ labels: ["http"] }).factory(); // Error has 'http' as error label.
+throw errors.codes.Code.with({ labels: ["http"] })
+  .with({ labels: ["what"] })
+  .factory(); // Error has both 'http' and 'what' as error label.
+throw errors.codes.Code.with({ labels: ["http"] })
+  .with({ labels: ["what"] })
+  .factory(null, { labels: ["fabulous"] }); // Error has the 3 labels.
+```
+
+### annotations
+
+![added 1.4.0](https://img.shields.io/badge/added->=%201.4.0-green?logo=git&style=for-the-badge)
+
+You can define annotations that gonna be appended to the error created.
+
+```typescript
+const errors = errorsFactory("MyScope", ["Code"]);
+
+throw errors.codes.Code.with({ annotations: [{ name: "a", value: 0 }] }).factory(); // Error has 'a' as error annotation.
+throw errors.codes.Code.with({ annotations: [{ name: "a", value: 0 }] })
+  .with({ annotations: [{ name: "b", value: 1 }] })
+  .factory(); // Error has both 'a' and 'b' as error label.
+throw errors.codes.Code.with({ annotations: [{ name: "a", value: 0 }] })
+  .with({ annotations: [{ name: "b", value: 1 }] })
+  .factory(null, { annotations: [{ name: "c", value: 2 }] }); // Error has the 3 annotations.
+```
+
 ### reason
 
 You can define a default reason if the factory is called with a null reason.
