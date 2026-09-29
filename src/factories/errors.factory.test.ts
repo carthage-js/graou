@@ -1,7 +1,7 @@
-import { describe, test, expect, jest } from "@jest/globals";
+import { describe, expect, jest, test } from "@jest/globals";
 
-import { makeErrors } from "./errors.factory";
-import { MessageFactory, graouErrorUidSymbol } from "../types";
+import { makeErrors } from "$project/factories/errors.factory";
+import { graouErrorUidSymbol, MessageFactory } from "$project/types";
 
 describe("makeErrors", () => {
   test("Check if the properties match the final object", () => {

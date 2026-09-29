@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["oxlint.config.ts", "jest.config.ts", "dist", "examples", "**/*.test.*"]
+}

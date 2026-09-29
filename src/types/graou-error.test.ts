@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { GraouError, graouErrorUidSymbol } from "./graou-error";
+import { GraouError, graouErrorUidSymbol } from "$project/types/graou-error";
 
 describe("graou-error", () => {
   describe("lookup", () => {

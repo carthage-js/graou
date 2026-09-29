@@ -1,24 +1,16 @@
 {
-    "compilerOptions": {
-        "target": "es2022",
-        "module": "commonjs",
-        "strict": true,
-        "noImplicitAny": true,
-        "noImplicitThis": false,
-        "declaration": true,
-        "rootDir": "./src",
-        "outDir": "./dist",
-        "paths": {
-            "$project/*": [
-                "./src/*"
-            ]
-        }
-    },
-    "exclude": [
-        "oxlint.config.ts",
-        "jest.config.ts",
-        "dist",
-        "examples",
-        "**/*.test.*"
-    ]
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "commonjs",
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": false,
+    "declaration": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "paths": {
+      "$project/*": ["./src/*"]
+    }
+  },
+  "exclude": ["oxlint.config.ts", "jest.config.ts", "dist", "examples"]
 }
