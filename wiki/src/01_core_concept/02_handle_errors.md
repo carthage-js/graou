@@ -18,7 +18,7 @@ This method creates a copy of the code helper with options that affect the behav
 
 ### labels
 
-![added 1.4.0](https://img.shields.io/badge/added->=%201.4.0-green?logo=git&style=for-the-badge)
+![added 1.3.0](https://img.shields.io/badge/added->=%201.3.0-green?logo=git&style=for-the-badge)
 
 You can define labels that gonna be appended to the error created.
 
@@ -36,7 +36,7 @@ throw errors.codes.Code.with({ labels: ["http"] })
 
 ### annotations
 
-![added 1.4.0](https://img.shields.io/badge/added->=%201.4.0-green?logo=git&style=for-the-badge)
+![added 1.3.0](https://img.shields.io/badge/added->=%201.3.0-green?logo=git&style=for-the-badge)
 
 You can define annotations that gonna be appended to the error created.
 

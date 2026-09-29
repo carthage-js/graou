@@ -125,7 +125,7 @@ instance.myMethod();
 
 ## Magic context
 
-![added 1.4.0](https://img.shields.io/badge/added->=%201.4.0-green?logo=git&style=for-the-badge)
+![added 1.3.0](https://img.shields.io/badge/added->=%201.3.0-green?logo=git&style=for-the-badge)
 
 > [!NOTE]
 > Check out the example: [TS](https://github.com/carthage-js/graou/blob/devel/examples/src/decoratedClassWithMagicErrorContext.ts)
