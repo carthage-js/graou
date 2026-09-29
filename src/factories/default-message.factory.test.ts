@@ -1,6 +1,6 @@
-import { describe, test, expect } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 
-import { defaultMessageFactory } from "./default-message.factory";
+import { defaultMessageFactory } from "$project/factories/default-message.factory";
 
 describe("defaultMessageFactory", () => {
   test("Basic usage", () => {

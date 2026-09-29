@@ -1,17 +1,17 @@
-import { describe, test, expect } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 
-import { makeModuleErrorsFactory } from "../factories";
 import {
-  guardClassErrorsMismatch,
   bindClassWithErrors,
   decorateClassWithErrors,
   getClassErrors,
   getMethodError,
+  guardClassErrorsMismatch,
   isInstanceOfClassErrors,
   isInstanceOfMethodError,
-} from "./class.util";
-import { utilsErrors } from "../errors";
-import { GraouError } from "../types";
+} from "$project/utils/class.util";
+import { utilsErrors } from "$project/errors";
+import { GraouError } from "$project/types";
+import { makeModuleErrorsFactory } from "$project/factories";
 
 describe("guardClassErrorsMismatch", () => {
   const errorsFactory = makeModuleErrorsFactory({

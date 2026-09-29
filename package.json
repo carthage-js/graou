@@ -3,28 +3,28 @@
   "version": "1.2.0",
   "description": "Avoid wolf in code with this library to design better error management.",
   "keywords": [
+    "design-pattern",
     "errors",
-    "exceptions",
-    "design-pattern"
+    "exceptions"
   ],
   "homepage": "https://github.com/carthage-js/graou#readme",
   "bugs": {
     "url": "https://github.com/carthage-js/graou/issues"
   },
+  "license": "MIT",
+  "author": "ZephyrDevelop",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/carthage-js/graou.git"
   },
-  "license": "MIT",
-  "author": "ZephyrDevelop",
-  "type": "commonjs",
-  "main": "dist/index.js",
   "files": [
     "dist"
   ],
+  "type": "commonjs",
+  "main": "dist/index.js",
   "scripts": {
     "prepack": "npm run build",
-    "build": "rm -rf ./dist/ && tsc && tsc-alias",
+    "build": "rm -rf ./dist/ && tsc -p ./tsconfig.production.json && tsc-alias -p ./tsconfig.production.json",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "lint": "oxlint",

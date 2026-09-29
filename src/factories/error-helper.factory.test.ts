@@ -1,7 +1,7 @@
-import { describe, test, expect, jest } from "@jest/globals";
+import { describe, expect, jest, test } from "@jest/globals";
 
-import { makeErrorHelper } from "./error-helper.factory";
-import { GraouError, GraouErrorFactory, GraouErrorLookup } from "../types";
+import { makeErrorHelper } from "$project/factories/error-helper.factory";
+import { GraouError, GraouErrorFactory, GraouErrorLookup } from "$project/types";
 
 function makeErrorFactory($class: any): GraouErrorFactory {
   return jest.fn(

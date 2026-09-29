@@ -1,6 +1,5 @@
-import { describe, test, expect, beforeEach, jest } from "@jest/globals";
-
-import { makeModuleErrorsFactory } from "./module-errors.factory";
+import { describe, expect, jest, test } from "@jest/globals";
+import { makeModuleErrorsFactory } from "$project/factories/module-errors.factory";
 
 jest.mock("./errors.factory", () => ({
   makeErrors: jest.fn((internalOpts) => internalOpts),
