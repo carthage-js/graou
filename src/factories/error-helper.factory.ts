@@ -2,6 +2,7 @@ import {
   GraouError,
   GraouErrorFactory,
   GraouErrorLookup,
+  GraouErrorOptions,
   graouErrorUidSymbol,
 } from "$project/types";
 import { ErrorHelper } from "$project/types/error-helper";
@@ -23,7 +24,7 @@ export function makeErrorHelper(
       factory: GraouErrorFactory,
       defaultReason: string,
       reason?: string | null,
-      options?: ErrorOptions,
+      options?: GraouErrorOptions,
     ) {
       return factory(reason ?? defaultReason, options);
     }.bind(null, customizedFactory, options.reason);
@@ -34,7 +35,7 @@ export function makeErrorHelper(
       factory: GraouErrorFactory,
       uid: string,
       reason?: string | null,
-      options?: ErrorOptions,
+      options?: GraouErrorOptions,
     ) {
       if (
         options?.cause instanceof GraouError &&

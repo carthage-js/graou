@@ -1,3 +1,7 @@
+import { Annotation } from "$project/types/annotation";
+import { deepFreeze } from "$project/utils/freeze.utils";
+import { GraouErrorOptions } from "$project/types/graou-error-options";
+
 const graouErrorQuickCauseAccessMappingSymbol: unique symbol = Symbol.for(
   "graouErrorQuickCauseAccessMapping",
 );
@@ -13,6 +17,8 @@ export class GraouError extends Error {
   readonly code!: string;
   readonly subcode!: string | null;
   readonly reason!: string | null;
+  readonly labels!: Array<string>;
+  readonly annotations!: Array<Annotation>;
   readonly [graouErrorUidSymbol]?: string | undefined;
 
   constructor(
@@ -22,9 +28,13 @@ export class GraouError extends Error {
     subcode: string | null,
     reason: string | null,
     fullMessage: string,
-    options?: ErrorOptions,
+    options?: GraouErrorOptions,
   ) {
     super(fullMessage, options);
+
+    const roLabels = deepFreeze(options?.labels || []);
+    const roAnnotations = deepFreeze(options?.annotations || []);
+
     // Discard dev to modify this properties because they are readonly
     Object.defineProperties(this, {
       nodeModule: {
@@ -41,6 +51,12 @@ export class GraouError extends Error {
       },
       reason: {
         get: () => reason,
+      },
+      labels: {
+        get: () => roLabels,
+      },
+      annotations: {
+        get: () => roAnnotations,
       },
     });
 
@@ -135,12 +151,17 @@ export class GraouError extends Error {
       }
 
       visited.push(current);
-      Object.assign(target, {
-        nodeModule: current.nodeModule,
-        scope: current.scope,
-        code: current.code,
-        reason: current.reason,
-      });
+      Object.assign(
+        target,
+        {
+          nodeModule: current.nodeModule,
+          scope: current.scope,
+          code: current.code,
+          reason: current.reason,
+        },
+        current.annotations.length > 0 ? { annotations: current.annotations } : {},
+        current.labels.length > 0 ? { labels: current.labels } : {},
+      );
 
       if (current.subcode) {
         target.subcode = current.subcode;
