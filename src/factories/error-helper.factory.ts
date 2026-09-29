@@ -33,7 +33,7 @@ export function makeErrorHelper(
     }.bind(null, customizedFactory, options.reason);
   }
 
-  if (options?.annotations?.length) {
+  if (options?.annotations) {
     customizedFactory = function (
       factory: GraouErrorFactory,
       defaultAnnotations: Array<Annotation>,
@@ -47,7 +47,7 @@ export function makeErrorHelper(
     }.bind(null, customizedFactory, options.annotations);
   }
 
-  if (options?.labels?.length) {
+  if (options?.labels) {
     customizedFactory = function (
       factory: GraouErrorFactory,
       defaultLabels: Array<string>,

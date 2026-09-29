@@ -13,7 +13,8 @@
     "subcodes": "DEMO_FILE=./src/subcodes.ts npm run run-ex",
     "async": "DEMO_FILE=./src/async.ts npm run run-ex",
     "decoratedClass": "DEMO_FILE=./src/decoratedClass.ts npm run run-ex",
-    "decoratedClassAndSubcodes": "DEMO_FILE=./src/decoratedClassAndSubcodes.ts npm run run-ex"
+    "decoratedClassAndSubcodes": "DEMO_FILE=./src/decoratedClassAndSubcodes.ts npm run run-ex",
+    "decoratedClassWithMagicErrorContext": "DEMO_FILE=./src/decoratedClassWithMagicErrorContext.ts npm run run-ex"
   },
   "dependencies": {
     "@carthage-js/graou": "file://.."

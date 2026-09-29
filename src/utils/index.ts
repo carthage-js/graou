@@ -1,2 +1,2 @@
 export * from "./class.util";
-export * from "./object.utils";
+export * from "./freeze.utils";

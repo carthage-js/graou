@@ -10,7 +10,7 @@ import {
   isInstanceOfMethodError,
 } from "$project/utils/class.util";
 import { utilsErrors } from "$project/errors";
-import { GraouError } from "$project/types";
+import { GraouError, GraouErrorContext } from "$project/types";
 import { makeModuleErrorsFactory } from "$project/factories";
 
 describe("guardClassErrorsMismatch", () => {
@@ -85,6 +85,8 @@ describe("bindClassWithErrors", () => {
   }
 
   class Demo extends Parent {
+    private _graouErrorContext!: GraouErrorContext;
+
     constructor($throw: boolean) {
       super();
       if ($throw) {
@@ -95,9 +97,47 @@ describe("bindClassWithErrors", () => {
     my_child_class() {
       throw new Error("Decorated");
     }
+
+    with_error_context() {
+      this._graouErrorContext.addLabels("1", "2");
+
+      this._graouErrorContext.addAnnotations({
+        name: "demo",
+        value: 0,
+      });
+
+      this._graouErrorContext.addAnnotations({
+        name: "demo2",
+        value: 1,
+      });
+
+      throw new Error("context");
+    }
+
+    with_self() {
+      this._graouErrorContext.addLabels("1");
+      return this;
+    }
+
+    async with_async_self() {
+      this._graouErrorContext.addLabels("1");
+      return this;
+    }
+
+    async with_async_other() {
+      this._graouErrorContext.addLabels("1");
+      return 0;
+    }
   }
 
-  const errors = errorsFactory("Demo", ["constructor", "my_child_class"]);
+  const errors = errorsFactory("Demo", [
+    "constructor",
+    "my_child_class",
+    "with_error_context",
+    "with_self",
+    "with_async_self",
+    "with_async_other",
+  ]);
   const DemoDecorated = bindClassWithErrors(errors, Demo);
 
   test("Must throw the raw error of a parent class", () => {
@@ -110,6 +150,43 @@ describe("bindClassWithErrors", () => {
     expect(() => new DemoDecorated(false).my_child_class()).toThrow(
       errors.codes.my_child_class.$class,
     );
+  });
+
+  test("The error context must hydrate on the error", () => {
+    const err = errors.codes.with_error_context.lookup(() =>
+      new DemoDecorated(false).with_error_context(),
+    );
+    expect(err).toBeDefined();
+    expect(err?.toJSON()).toEqual({
+      annotations: [
+        {
+          name: "demo",
+          value: 0,
+        },
+        {
+          name: "demo2",
+          value: 1,
+        },
+      ],
+      cause: "context",
+      code: "with_error_context",
+      labels: ["1", "2"],
+      nodeModule: "jest",
+      reason: null,
+      scope: "Demo",
+    });
+  });
+
+  test("The error context can't reach outside the function", () => {
+    expect(new DemoDecorated(false).with_self()).toBeInstanceOf(DemoDecorated);
+  });
+
+  test("The error context can't reach outside the async function", async () => {
+    await expect(new DemoDecorated(false).with_async_self()).resolves.toBeInstanceOf(DemoDecorated);
+  });
+
+  test("The error context doesn't alter an async result", async () => {
+    await expect(new DemoDecorated(false).with_async_other()).resolves.toEqual(0);
   });
 });
 

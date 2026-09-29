@@ -122,3 +122,42 @@ const MyClassDecorated = graou.utils.bindClassWithErrors(errors, MyClass);
 const instance = new MyClassDecorated();
 instance.myMethod();
 ```
+
+## Magic context
+
+![added 1.4.0](https://img.shields.io/badge/added->=%201.4.0-green?logo=git&style=for-the-badge)
+
+> [!NOTE]
+> Check out the example: [TS](https://github.com/carthage-js/graou/blob/devel/examples/src/decoratedClassWithMagicErrorContext.ts)
+
+Graou introduce a magic attribute named `_graouErrorContext`.
+That property is here to allow you to add labels and annotations gracefully on the error created by the method.
+The property is not really stored on the class actually.
+It's only `this` is alterated by a proxy to give a variable hold by graou.
+That property is unique by call and can't be the same twice so no worry.
+On typescript, you need to hint is presence to avoid compilation issues.
+
+```typescript
+import graou from "@carthage-js/graou";
+
+const errorsFactory = graou.makeModuleErrorsFactory({
+  moduleName: "<YOUR PROJECT NAME>",
+});
+
+const errors = errorsFactory("MyClass", ["myMethod"]);
+
+class MyClass {
+  private _graouErrorContext: graou.GraouErrorContext;
+
+  myMethod() {
+    this._graouErrorContext.addLabels("hello world");
+    // ... my code
+  }
+}
+
+const MyClassDecorated = graou.utils.bindClassWithErrors(errors, MyClass);
+
+// Usage
+const instance = new MyClassDecorated();
+instance.myMethod();
+```

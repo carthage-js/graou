@@ -1,5 +1,6 @@
 import { utilsErrors } from "$project/errors/utils.errors";
 import { ClassErrors, ClassErrorsFactory } from "$project/types";
+import { GraouErrorContext } from "$project/types/graou-error-context";
 
 const graouClassSymbol = Symbol.for("Graou");
 
@@ -53,9 +54,32 @@ export function bindClassWithErrors<Type extends Function & (new (...args: any) 
 
     const errorHelper = errors.codes[key];
     const newFn = function (...args: any[]) {
-      return errorHelper
-        .with({ uid: `${errors.scope.name}:${errorHelper.name}` })
-        .trap($class.prototype[key].bind(this, ...args));
+      const ctx = new GraouErrorContext();
+      const proxy = new Proxy(this, {
+        get(self, prop, reciever) {
+          if (prop === "_graouErrorContext") {
+            return ctx;
+          } else {
+            return self[prop];
+          }
+        },
+      });
+
+      const result = errorHelper
+        .with({
+          uid: `${errors.scope.name}:${errorHelper.name}`,
+          labels: ctx.getLabels(),
+          annotations: ctx.getAnnotations(),
+        })
+        .trap($class.prototype[key].bind(proxy, ...args));
+
+      if (result === proxy) {
+        return this;
+      } else if (result instanceof Promise) {
+        return result.then((r) => (r === proxy ? this : r));
+      } else {
+        return result;
+      }
     };
 
     newFn[graouClassSymbol] = errorHelper;
